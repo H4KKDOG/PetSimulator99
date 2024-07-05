@@ -15,7 +15,6 @@ local function saveSettings()
         AutoHatchEvent = getgenv().AutoHatchEvent,
         AutoHatchNormal = getgenv().AutoHatchNormal,
         NormalEggName = getgenv().NormalEggName,
-        EggAmount = getgenv().EggAmount,
     }
     writefile("ps99settings.json", game:GetService("HttpService"):JSONEncode(settings))
 end
@@ -125,8 +124,6 @@ nextYPosition = nextYPosition + buttonIncrement
 
 local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "Normal Egg Name", "Hacker Secure Egg", "NormalEggName")
 nextYPosition = nextYPosition + buttonIncrement
-
-local EggAmountLabel = createTextBox(MainFrame, nextYPosition, "Egg Amount", "67", "EggAmount")
 
 -- Make draggable
 local UserInputService = game:GetService("UserInputService")
