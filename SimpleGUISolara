@@ -323,7 +323,7 @@ local function farmBreakables()
 end
 
 local function findNearestEgg()
-    local nearestEgg, nearestDistance = nil, math.huge
+    local nearestEgg, nearestDistance = nil, 250
     local customEggs = Things:FindFirstChild("CustomEggs")
     if customEggs then
         for _, egg in ipairs(customEggs:GetChildren()) do
