@@ -279,7 +279,7 @@ local function XZDist(obj1, obj2)
 end
 
 local function findNearestBreakable()
-    local nearestBreakable, nearestDistance = nil, math.huge
+    local nearestBreakable, nearestDistance = nil, 250
     for _, breakable in ipairs(Breakables:GetChildren()) do
         local meshPart = breakable:FindFirstChildWhichIsA("MeshPart")
         if meshPart then
@@ -294,7 +294,7 @@ end
 
 local function isBreakableInRadius(breakable)
     local hitbox = breakable:FindFirstChild("Hitbox", true)
-    return hitbox and XZDist(hitbox, HumanoidRootPart) <= 100
+    return hitbox and XZDist(hitbox, HumanoidRootPart) <= 150
 end
 
 local function farmBreakables()
