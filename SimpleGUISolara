@@ -409,5 +409,4 @@ while task.wait() do
     task.spawn(hatchEgg)
     task.spawn(antiAFK)
     task.spawn(eggnameHatch)
-    task.spawn(tapEgg)
 end
