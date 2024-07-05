@@ -378,16 +378,12 @@ local function clickPosition()
 end
 
 local function tapEgg()
-    if not tapEggsDebounce then
-        tapEggsDebounce = true
-        repeat task.wait() until Workspace.Camera:FindFirstChild("Eggs")
-        repeat
-            task.wait()
-            clickPosition()
-        until not Workspace.Camera:FindFirstChild("Eggs")
-        task.wait(0.75)
-        tapEggsDebounce = false
-    end
+    repeat wait() until Workspace.Camera:FindFirstChild("Eggs")
+    repeat
+        task.wait()
+        clickPosition()
+    until not Workspace.Camera:FindFirstChild("Eggs")
+    task.wait(0.5)
 end
 
 
