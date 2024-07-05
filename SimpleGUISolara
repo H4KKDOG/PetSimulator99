@@ -381,9 +381,9 @@ local function clickPosition()
 end
 
 local function tapEgg()
-    repeat wait() until Workspace.Camera:FindFirstChild("Eggs")
+    repeat task.wait() until Workspace.Camera:FindFirstChild("Eggs")
     repeat
-        task.wait()
+        wait()
         clickPosition()
     until not Workspace.Camera:FindFirstChild("Eggs")
     task.wait(0.5)
