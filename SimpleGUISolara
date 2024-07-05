@@ -1,0 +1,362 @@
+-- Load saved settings
+local function loadSettings()
+    if isfile("ps99settings.json") then
+        local settings = game:GetService("HttpService"):JSONDecode(readfile("ps99settings.json"))
+        for k, v in pairs(settings) do
+            getgenv()[k] = v
+        end
+    end
+end
+
+-- Save settings to a file
+local function saveSettings()
+    local settings = {
+        AntiAFKJump = getgenv().AntiAFKJump,
+        AutoTap = getgenv().AutoTap,
+        AutoHatchEvent = getgenv().AutoHatchEvent,
+        AutoHatchNormal = getgenv().AutoHatchNormal,
+        NormalEggName = getgenv().NormalEggName,
+        EggAmount = getgenv().EggAmount,
+    }
+    writefile("ps99settings.json", game:GetService("HttpService"):JSONEncode(settings))
+end
+
+-- Load settings if they exist
+loadSettings()
+
+-- Initialize GUI elements
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 300, 0, 400)
+MainFrame.Active = true
+MainFrame.Draggable = true
+local UICorner = Instance.new("UICorner")
+UICorner.Parent = MainFrame
+
+local Title = Instance.new("TextLabel")
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(0, 300, 0, 50)
+Title.Font = Enum.Font.SourceSans
+Title.Text = "@stupidzero."
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 24
+
+-- Function to create toggle buttons
+local function createToggleButton(parent, positionY, settingName, buttonText, defaultState)
+    local button = Instance.new("TextButton")
+    button.Parent = parent
+    button.Position = UDim2.new(0.1, 0, positionY, 0)
+    button.Size = UDim2.new(0, 250, 0, 50)
+    button.Font = Enum.Font.SourceSans
+    button.TextColor3 = Color3.fromRGB(0, 0, 0)
+    button.TextSize = 20
+    button.Text = buttonText
+    button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+
+    button.MouseButton1Click:Connect(function()
+        getgenv()[settingName] = not getgenv()[settingName]
+        button.Text = buttonText
+        button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+        saveSettings()
+    end)
+
+    return button
+end
+
+-- Function to create text boxes
+local function createTextBox(parent, positionY, labelText, defaultValue, settingName)
+    local label = Instance.new("TextLabel")
+    label.Parent = parent
+    label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    label.BackgroundTransparency = 1
+    label.Position = UDim2.new(0.1, 0, positionY + 0.01, 0)
+    label.Size = UDim2.new(0, 250, 0, 25)
+    label.Font = Enum.Font.SourceSans
+    label.Text = labelText
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 18
+    label.TextYAlignment = Enum.TextYAlignment.Center
+
+    local textBox = Instance.new("TextBox")
+    textBox.Parent = parent
+    textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    textBox.Position = UDim2.new(0.1, 0, positionY + 0.075, 0)
+    textBox.Size = UDim2.new(0, 250, 0, 25)
+    textBox.Font = Enum.Font.SourceSans
+    textBox.Text = defaultValue
+    textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textBox.TextSize = 18
+
+    -- FocusLost event to update setting and save to file
+    textBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local newText = textBox.Text
+            getgenv()[settingName] = newText
+            saveSettings() -- Save updated settings to file
+        end
+    end)
+
+    return textBox
+end
+
+-- Create toggle buttons and text boxes using loaded settings
+local startYPosition = 0.125
+local buttonIncrement = 0.125
+local nextYPosition = startYPosition
+
+local AntiAFKJumpButton = createToggleButton(MainFrame, nextYPosition, "AntiAFKJump", "Anti AFK Jump", true)
+nextYPosition = nextYPosition + buttonIncrement
+
+local AutoTapButton = createToggleButton(MainFrame, nextYPosition, "AutoTap", "Auto Tap", true)
+nextYPosition = nextYPosition + buttonIncrement
+
+local AutoHatchEventButton = createToggleButton(MainFrame, nextYPosition, "AutoHatchEvent", "Auto Hatch Event", true)
+nextYPosition = nextYPosition + buttonIncrement
+
+local AutoHatchNormalButton = createToggleButton(MainFrame, nextYPosition, "AutoHatchNormal", "Auto Hatch Normal", true)
+nextYPosition = nextYPosition + buttonIncrement
+
+local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "Normal Egg Name", "Hacker Secure Egg", "NormalEggName")
+nextYPosition = nextYPosition + buttonIncrement
+
+local EggAmountLabel = createTextBox(MainFrame, nextYPosition, "Egg Amout", "67", "EggAmount")
+nextYPosition = nextYPosition + buttonIncrement
+
+-- Make draggable
+local UserInputService = game:GetService("UserInputService")
+
+local function makeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
+end
+
+makeDraggable(MainFrame)
+
+local function toggleGuiVisibility()
+    MainFrame.Visible = not MainFrame.Visible
+end
+
+-- Function to handle keybind
+local function handleKeybind(input)
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        -- Check if any TextBox currently has focus
+        local focusedTextBox = UserInputService:GetFocusedTextBox()
+        if focusedTextBox then
+            return -- Exit function if a TextBox has focus
+        end
+
+        if input.KeyCode == Enum.KeyCode[getgenv().Keybind] then
+            toggleGuiVisibility()
+        end
+    end
+end
+
+UserInputService.InputBegan:Connect(handleKeybind)
+
+-- Your main script logic
+if getgenv().Running then return end
+getgenv().Running = true
+getgenv().coinQueue = {}
+getgenv().CurrentValue = 0 
+
+local LocalPlayer = game.Players.LocalPlayer
+local HumanoidRootPart = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+local Network = ReplicatedStorage:WaitForChild("Network")
+local Workspace = cloneref(game:GetService("Workspace"))
+local Things = Workspace["__THINGS"]
+local Breakables = Things:WaitForChild("Breakables")
+
+local doingQueue, farmBreakablesDebounce, hatchEggsDebounce, antiAFKDebounce = false, false, false, false
+
+if identifyexecutor() == "Solara" then
+    warn("Solara doesn't support removing egg animation")
+    warn("AutoHatch still works but the egg is stuck on the screen")
+    warn("Egg is still hatching even if there is an egg on the screen")
+else
+    hookfunction(getsenv(LocalPlayer.PlayerScripts.Scripts.Game["Egg Opening Frontend"]).PlayEggAnimation, function()
+        return
+    end)
+end
+
+local function Fire(name, args)
+    local networkEvent = Network:FindFirstChild(name)
+    if networkEvent then
+        networkEvent:FireServer(unpack(args))
+    else
+        warn("There's no Network." .. name)
+    end
+end
+
+local function XZDist(obj1, obj2)
+    local pos1, pos2 = obj1.Position, obj2.Position
+    return (Vector2.new(pos1.X, pos1.Z) - Vector2.new(pos2.X, pos2.Z)).Magnitude
+end
+
+local function findNearestBreakable()
+    local nearestBreakable, nearestDistance = nil, math.huge
+    for _, breakable in ipairs(Breakables:GetChildren()) do
+        local meshPart = breakable:FindFirstChildWhichIsA("MeshPart")
+        if meshPart then
+            local distance = (HumanoidRootPart.Position - meshPart.Position).magnitude
+            if distance < nearestDistance then
+                nearestBreakable, nearestDistance = breakable, distance
+            end
+        end
+    end
+    return nearestBreakable
+end
+
+local function isBreakableInRadius(breakable)
+    local hitbox = breakable:FindFirstChild("Hitbox", true)
+    return hitbox and XZDist(hitbox, HumanoidRootPart) <= 100
+end
+
+local function farmBreakables()
+    if getgenv().AutoTap and not farmBreakablesDebounce then
+        farmBreakablesDebounce = true
+        local breakable = findNearestBreakable()
+        if breakable and not table.find(getgenv().coinQueue, breakable.Name) then
+            table.insert(getgenv().coinQueue, breakable.Name)
+            task.spawn(function()
+                repeat task.wait(0.1) until not Breakables:FindFirstChild(breakable.Name) or not isBreakableInRadius(breakable)
+                table.remove(getgenv().coinQueue, table.find(getgenv().coinQueue, breakable.Name))
+            end)
+        end
+        task.spawn(function()
+            if not doingQueue then
+                doingQueue = true
+                for _, currentCoin in ipairs(getgenv().coinQueue) do
+                    Fire("Breakables_PlayerDealDamage", {currentCoin})
+                    task.wait(0.1)
+                end
+                doingQueue = false
+            end
+        end)
+        farmBreakablesDebounce = false
+    end
+end
+
+local function findNearestEgg()
+    local nearestEgg, nearestDistance = nil, math.huge
+    local customEggs = Things:FindFirstChild("CustomEggs")
+    if customEggs then
+        for _, egg in ipairs(customEggs:GetChildren()) do
+            if egg:IsA("Model") then
+                local distance = (HumanoidRootPart.Position - egg.PrimaryPart.Position).magnitude
+                if distance < nearestDistance then
+                    nearestEgg, nearestDistance = egg.Name, distance
+                end
+            end
+        end
+    end
+    return nearestEgg
+end
+
+local function hatchEgg()
+    if getgenv().AutoHatchEvent and not hatchEggsDebounce then
+        hatchEggsDebounce = true
+        Network:WaitForChild("CustomEggs_Hatch"):InvokeServer(findNearestEgg(), getgenv().EggAmount)
+        task.wait()
+        hatchEggsDebounce = false
+    end
+end
+
+local function eggnameHatch()
+    while getgenv().AutoHatchNormal and not nameEggsDebounce do
+        nameEggsDebounce = true
+        Network.Eggs_RequestPurchase:InvokeServer(getgenv().NormalEggName, getgenv().EggAmount)
+        task.wait()
+        nameEggsDebounce = false
+    end
+end
+
+local function antiAFK()
+    if getgenv().AntiAFKJump and not antiAFKDebounce then
+        antiAFKDebounce = true
+        LocalPlayer.Character.Humanoid:ChangeState(3)
+        task.wait(math.random(130, 360))
+        antiAFKDebounce = false
+    end
+end
+
+Things:FindFirstChild("Lootbags").ChildAdded:Connect(function(lootbag)
+    task.wait()
+    if lootbag then
+        Network:WaitForChild("Lootbags_Claim"):FireServer({lootbag.Name})
+        task.wait()
+        lootbag:Destroy()
+    end
+end)
+
+Things:FindFirstChild("Orbs").ChildAdded:Connect(function(orb)
+    task.wait()
+    if orb then
+        Network:FindFirstChild("Orbs: Collect"):FireServer({tonumber(orb.Name)})
+        task.wait()
+        orb:Destroy()
+    end
+end)
+
+LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
+
+if getconnections then
+    for _, v in pairs(getconnections(LocalPlayer.Idled)) do
+        v:Disable()
+    end
+else
+    LocalPlayer.Idled:Connect(function()
+        game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+        game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    end)
+end
+
+game:GetService("StarterGui"):SetCore("DevConsoleVisible", true)
+print("AutoHatchEvent is for custom or event eggs (AutoHatch Nearest)")
+print("AutoHatchNormal is for normal world or area eggs")
+print("PS99 Simple Script @stupidzero.")
+
+while task.wait() do
+    task.spawn(farmBreakables)
+    task.spawn(hatchEgg)
+    task.spawn(antiAFK)
+    task.spawn(eggnameHatch)
+end
