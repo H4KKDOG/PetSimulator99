@@ -383,7 +383,7 @@ end
 local function tapEgg()
     repeat task.wait() until Workspace.Camera:FindFirstChild("Eggs")
     repeat
-        wait()
+        task.wait()
         clickPosition()
     until not Workspace.Camera:FindFirstChild("Eggs")
     task.wait(0.5)
