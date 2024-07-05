@@ -128,7 +128,7 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
 end
 
 -- Function to create a toggle button for GUI visibility
-local function createToggleButton(parent, buttonText, onClick)
+local function createToggleGui(parent, buttonText, onClick)
     local button = Instance.new("TextButton")
     button.Parent = parent
     button.AnchorPoint = Vector2.new(1, 0) -- Anchor to top right corner
@@ -152,7 +152,7 @@ local function createToggleButton(parent, buttonText, onClick)
 end
 
 if isMobile then
-    local toggleButton = createToggleButton(ScreenGui, "Toggle GUI", function()
+    local toggleButton = createToggleGui(ScreenGui, "Toggle GUI", function()
         MainFrame.Visible = not MainFrame.Visible
     end)
 end
