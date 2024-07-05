@@ -253,12 +253,12 @@ local Breakables = Things:WaitForChild("Breakables")
 local doingQueue, farmBreakablesDebounce, hatchEggsDebounce, antiAFKDebounce = false, false, false, false
 
 if identifyexecutor() == "Solara" then
-    print("/n")
+    warn("//////////////////////////////////////////////////////////////////////////////////////")
     warn("Solara doesn't support removing egg animation")
     warn("AutoHatch still works")
     warn("Egg is still hatching even if there is an egg in screen")
     warn("Auto Tap Egg in screen is just for aesthetic it still hatching fast")
-    print("/n")
+    warn("//////////////////////////////////////////////////////////////////////////////////////")
 else
     hookfunction(getsenv(LocalPlayer.PlayerScripts.Scripts.Game["Egg Opening Frontend"]).PlayEggAnimation, function()
         return
@@ -413,13 +413,12 @@ else
 end
 
 game:GetService("StarterGui"):SetCore("DevConsoleVisible", true)
-print("/n")
+print("//////////////////////////////////////////////////////////////////////////////////////")
 print("AutoHatchEvent is for custom or event eggs (AutoHatch Nearest)")
 print("AutoHatchEvent is set to hatch nearest so dont need update when event or new custom egg")
 print("AutoHatchNormal is for normal world or area eggs")
 print("AutoHatchNormal only works in world egg or the one thats always in area/worlds")
-print("PS99 Simple Script @stupidzero.")
-print("/n")
+print("//////////////////////////////////////////////////////////////////////////////////////")
 
 while task.wait() do
     task.spawn(farmBreakables)
