@@ -54,32 +54,6 @@ Title.Text = "@stupidzero."
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 24
 
--- Function to create toggle buttons
-local function createToggleButton(parent, positionY, settingName, buttonText, defaultState)
-    local button = Instance.new("TextButton")
-    button.Parent = parent
-    button.Position = UDim2.new(0.1, 0, positionY, 0)
-    button.Size = UDim2.new(0, 250, 0, 50)
-    button.Font = Enum.Font.SourceSans
-    button.TextColor3 = Color3.fromRGB(0, 0, 0)
-    button.TextSize = 20
-    button.Text = buttonText
-    button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-
-    -- Add rounded corners
-    local UICorner = Instance.new("UICorner")
-    UICorner.Parent = button
-
-    button.MouseButton1Click:Connect(function()
-        getgenv()[settingName] = not getgenv()[settingName]
-        button.Text = buttonText
-        button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-        saveSettings()
-    end)
-
-    return button
-end
-
 -- Function to create text boxes
 local function createTextBox(parent, positionY, labelText, defaultValue, settingName)
     local label = Instance.new("TextLabel")
@@ -127,7 +101,7 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     return textBox
 end
 
--- Function to create a toggle button for GUI visibility
+-- Function to create a toggle for GUI visibility
 local function createToggleGui(parent, buttonText, onClick)
     local button = Instance.new("TextButton")
     button.Parent = parent
@@ -151,15 +125,35 @@ local function createToggleGui(parent, buttonText, onClick)
     return button
 end
 
-if isMobile then
-    local toggleButton = createToggleGui(ScreenGui, "Toggle GUI", function()
-        MainFrame.Visible = not MainFrame.Visible
+-- Function to create toggle buttons
+local function createToggleButton(parent, positionY, settingName, buttonText, defaultState)
+    local button = Instance.new("TextButton")
+    button.Parent = parent
+    button.Position = UDim2.new(0.1, 0, positionY, 0)
+    button.Size = UDim2.new(0, 250, 0, 50)
+    button.Font = Enum.Font.SourceSans
+    button.TextColor3 = Color3.fromRGB(0, 0, 0)
+    button.TextSize = 20
+    button.Text = buttonText
+    button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+
+    -- Add rounded corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.Parent = button
+
+    button.MouseButton1Click:Connect(function()
+        getgenv()[settingName] = not getgenv()[settingName]
+        button.Text = buttonText
+        button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+        saveSettings()
     end)
+
+    return button
 end
 
 -- Create toggle buttons and text boxes using loaded settings
 local startYPosition = 0.125
-local buttonIncrement = 0.125
+local buttonIncrement = 0.135
 local nextYPosition = startYPosition
 
 local AntiAFKJumpButton = createToggleButton(MainFrame, nextYPosition, "AntiAFKJump", "Anti AFK Jump", true)
@@ -178,8 +172,6 @@ local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "EggName (Nor
 nextYPosition = nextYPosition + buttonIncrement
 
 -- Make draggable
-local UserInputService = game:GetService("UserInputService")
-
 local function makeDraggable(frame)
     local dragging, dragInput, dragStart, startPos
 
@@ -216,7 +208,14 @@ local function makeDraggable(frame)
 end
 
 makeDraggable(MainFrame)
-makeDraggable(toggleButton)
+
+if isMobile then
+    local toggleButton = createToggleButton(ScreenGui, "Toggle GUI", function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
+
+    makeDraggable(toggleButton)
+end
 
 local function toggleGuiVisibility()
     MainFrame.Visible = not MainFrame.Visible
