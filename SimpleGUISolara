@@ -1,3 +1,4 @@
+-- Load saved settings
 local function loadSettings()
     if isfile("ps99settings.json") then
         local settings = game:GetService("HttpService"):JSONDecode(readfile("ps99settings.json"))
@@ -15,6 +16,7 @@ local function saveSettings()
         AutoHatchEvent = getgenv().AutoHatchEvent,
         AutoHatchNormal = getgenv().AutoHatchNormal,
         NormalEggName = getgenv().NormalEggName,
+        EggAmount = getgenv().EggAmount,
     }
     writefile("ps99settings.json", game:GetService("HttpService"):JSONEncode(settings))
 end
@@ -83,13 +85,16 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     label.TextSize = 18
     label.TextYAlignment = Enum.TextYAlignment.Center
 
+    -- Determine the default value based on saved settings or provided default
+    local defaultValueFromSettings = getgenv()[settingName] or defaultValue
+
     local textBox = Instance.new("TextBox")
     textBox.Parent = parent
     textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     textBox.Position = UDim2.new(0.1, 0, positionY + 0.075, 0)
     textBox.Size = UDim2.new(0, 250, 0, 25)
     textBox.Font = Enum.Font.SourceSans
-    textBox.Text = defaultValue
+    textBox.Text = defaultValueFromSettings
     textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     textBox.TextSize = 18
 
@@ -104,6 +109,7 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
 
     return textBox
 end
+
 
 -- Create toggle buttons and text boxes using loaded settings
 local startYPosition = 0.125
@@ -122,7 +128,10 @@ nextYPosition = nextYPosition + buttonIncrement
 local AutoHatchNormalButton = createToggleButton(MainFrame, nextYPosition, "AutoHatchNormal", "Auto Hatch Normal", true)
 nextYPosition = nextYPosition + buttonIncrement
 
-local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "Normal Egg Name", "Hacker Secure Egg", "NormalEggName")
+local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "Normal Egg Name", "EggName", "NormalEggName")
+nextYPosition = nextYPosition + buttonIncrement
+
+local EggAmountLabel = createTextBox(MainFrame, nextYPosition, "Open Egg Amount", "Amount", "EggAmount")
 nextYPosition = nextYPosition + buttonIncrement
 
 -- Make draggable
