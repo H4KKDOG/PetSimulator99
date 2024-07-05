@@ -62,6 +62,10 @@ local function createToggleButton(parent, positionY, settingName, buttonText, de
     button.Text = buttonText
     button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 
+    -- Add rounded corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.Parent = button
+
     button.MouseButton1Click:Connect(function()
         getgenv()[settingName] = not getgenv()[settingName]
         button.Text = buttonText
@@ -86,6 +90,10 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     label.TextSize = 18
     label.TextYAlignment = Enum.TextYAlignment.Center
 
+    -- Add rounded corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.Parent = label
+
     -- Determine the default value based on saved settings or provided default
     local defaultValueFromSettings = getgenv()[settingName] or defaultValue
 
@@ -99,6 +107,10 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     textBox.TextSize = 18
 
+    -- Add rounded corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.Parent = textBox
+
     -- FocusLost event to update setting and save to file
     textBox.FocusLost:Connect(function(enterPressed)
         if enterPressed then
@@ -110,7 +122,6 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
 
     return textBox
 end
-
 
 -- Create toggle buttons and text boxes using loaded settings
 local startYPosition = 0.125
