@@ -1,4 +1,6 @@
--- Load saved settings
+if getgenv().Running then return end
+getgenv().Running = true
+
 local function loadSettings()
     if isfile("ps99settings.json") then
         local settings = game:GetService("HttpService"):JSONDecode(readfile("ps99settings.json"))
@@ -192,8 +194,6 @@ end
 UserInputService.InputBegan:Connect(handleKeybind)
 
 -- Your main script logic
-if getgenv().Running then return end
-getgenv().Running = true
 getgenv().coinQueue = {}
 getgenv().CurrentValue = 0 
 
