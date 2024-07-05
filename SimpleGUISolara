@@ -1,4 +1,3 @@
--- Load saved settings
 local function loadSettings()
     if isfile("ps99settings.json") then
         local settings = game:GetService("HttpService"):JSONDecode(readfile("ps99settings.json"))
@@ -127,8 +126,7 @@ nextYPosition = nextYPosition + buttonIncrement
 local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "Normal Egg Name", "Hacker Secure Egg", "NormalEggName")
 nextYPosition = nextYPosition + buttonIncrement
 
-local EggAmountLabel = createTextBox(MainFrame, nextYPosition, "Egg Amout", "67", "EggAmount")
-nextYPosition = nextYPosition + buttonIncrement
+local EggAmountLabel = createTextBox(MainFrame, nextYPosition, "Egg Amount", "67", "EggAmount")
 
 -- Make draggable
 local UserInputService = game:GetService("UserInputService")
