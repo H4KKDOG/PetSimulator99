@@ -25,6 +25,10 @@ end
 -- Load settings if they exist
 loadSettings()
 
+-- Detect if the player is on a mobile device
+local UserInputService = game:GetService("UserInputService")
+local isMobile = UserInputService.TouchEnabled
+
 -- Initialize GUI elements
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -123,6 +127,31 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     return textBox
 end
 
+-- Function to create a toggle button for GUI visibility
+local function createToggleButton(parent, buttonText, onClick)
+    local button = Instance.new("TextButton")
+    button.Parent = parent
+    button.AnchorPoint = Vector2.new(1, 0) -- Anchor to top right corner
+    button.Position = UDim2.new(1, -10, 0, 10) -- Offset from top right corner
+    button.Size = UDim2.new(0, 50, 0, 30)
+    button.Font = Enum.Font.SourceSans
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 14
+    button.Text = buttonText
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.BorderSizePixel = 0
+
+    button.MouseButton1Click:Connect(onClick)
+
+    return button
+end
+
+if isMobile then
+    local toggleButton = createToggleButton(ScreenGui, "Toggle GUI", function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
+end
+
 -- Create toggle buttons and text boxes using loaded settings
 local startYPosition = 0.125
 local buttonIncrement = 0.125
@@ -182,6 +211,7 @@ local function makeDraggable(frame)
 end
 
 makeDraggable(MainFrame)
+makeDraggable(toggleButton)
 
 local function toggleGuiVisibility()
     MainFrame.Visible = not MainFrame.Visible
