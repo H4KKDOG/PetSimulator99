@@ -129,7 +129,7 @@ nextYPosition = nextYPosition + buttonIncrement
 local AutoHatchNormalButton = createToggleButton(MainFrame, nextYPosition, "AutoHatchNormal", "Auto Hatch Normal", true)
 nextYPosition = nextYPosition + buttonIncrement
 
-local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "Normal Egg Name", "EggName", "NormalEggName")
+local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "EggName (Normal AutoHatch)", "EggName", "NormalEggName")
 nextYPosition = nextYPosition + buttonIncrement
 
 -- Make draggable
