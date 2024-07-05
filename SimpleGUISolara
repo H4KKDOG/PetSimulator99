@@ -372,6 +372,24 @@ Things:FindFirstChild("Lootbags").ChildAdded:Connect(function(lootbag)
     end
 end)
 
+local function clickPosition()
+    game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    game:GetService("VirtualUser"):Button1Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end
+
+local function tapEgg()
+    if not tapEggsDebounce then
+        tapEggsDebounce = true
+        repeat
+            task.wait()
+            clickPosition()
+        until not Workspace.Camera:FindFirstChild("Eggs")
+        task.wait(0.75)
+        tapEggsDebounce = false
+    end
+end
+
+
 Things:FindFirstChild("Orbs").ChildAdded:Connect(function(orb)
     task.wait()
     if orb then
@@ -404,4 +422,5 @@ while task.wait() do
     task.spawn(hatchEgg)
     task.spawn(antiAFK)
     task.spawn(eggnameHatch)
+    task.spawn(tapEgg)
 end
