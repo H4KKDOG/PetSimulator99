@@ -1,16 +1,21 @@
-if getgenv().Running then return end
+-- Settings handling
+if getgenv().Running then
+    return
+end
 getgenv().Running = true
+
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
 
 local function loadSettings()
     if isfile("ps99settings.json") then
-        local settings = game:GetService("HttpService"):JSONDecode(readfile("ps99settings.json"))
+        local settings = HttpService:JSONDecode(readfile("ps99settings.json"))
         for k, v in pairs(settings) do
             getgenv()[k] = v
         end
     end
 end
 
--- Save settings to a file
 local function saveSettings()
     local settings = {
         AntiAFKJump = getgenv().AntiAFKJump,
@@ -19,17 +24,12 @@ local function saveSettings()
         AutoHatchNormal = getgenv().AutoHatchNormal,
         NormalEggName = getgenv().NormalEggName,
     }
-    writefile("ps99settings.json", game:GetService("HttpService"):JSONEncode(settings))
+    writefile("ps99settings.json", HttpService:JSONEncode(settings))
 end
 
--- Load settings if they exist
 loadSettings()
 
--- Detect if the player is on a mobile device
-local UserInputService = game:GetService("UserInputService")
-local isMobile = UserInputService.TouchEnabled
-
--- Initialize GUI elements
+-- GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
@@ -54,8 +54,8 @@ Title.Text = "@stupidzero."
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 24
 
--- Function to create text boxes
 local function createTextBox(parent, positionY, labelText, defaultValue, settingName)
+    -- Function to create text boxes
     local label = Instance.new("TextLabel")
     label.Parent = parent
     label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -67,14 +67,9 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     label.TextColor3 = Color3.fromRGB(255, 255, 255)
     label.TextSize = 18
     label.TextYAlignment = Enum.TextYAlignment.Center
-
-    -- Add rounded corners
     local UICorner = Instance.new("UICorner")
     UICorner.Parent = label
-
-    -- Determine the default value based on saved settings or provided default
     local defaultValueFromSettings = getgenv()[settingName] or defaultValue
-
     local textBox = Instance.new("TextBox")
     textBox.Parent = parent
     textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -84,29 +79,23 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     textBox.Text = defaultValueFromSettings
     textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     textBox.TextSize = 18
-
-    -- Add rounded corners
     local UICorner = Instance.new("UICorner")
     UICorner.Parent = textBox
-
-    -- FocusLost event to update setting and save to file
     textBox.FocusLost:Connect(function(enterPressed)
         if enterPressed then
             local newText = textBox.Text
             getgenv()[settingName] = newText
-            saveSettings() -- Save updated settings to file
+            saveSettings() 
         end
     end)
-
     return textBox
 end
 
--- Function to create a toggle for GUI visibility
 local function createToggleGui(parent, buttonText, onClick)
     local button = Instance.new("TextButton")
     button.Parent = parent
-    button.AnchorPoint = Vector2.new(1, 0) -- Anchor to top right corner
-    button.Position = UDim2.new(1, -10, 0, 10) -- Offset from top right corner
+    button.AnchorPoint = Vector2.new(1, 0)
+    button.Position = UDim2.new(1, -10, 0, 10)
     button.Size = UDim2.new(0, 50, 0, 30)
     button.Font = Enum.Font.SourceSans
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -114,18 +103,13 @@ local function createToggleGui(parent, buttonText, onClick)
     button.Text = buttonText
     button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     button.BorderSizePixel = 0
-
-    -- Add rounded corners
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 8) -- Adjust the radius as needed
+    UICorner.CornerRadius = UDim.new(0, 8) 
     UICorner.Parent = button
-
     button.MouseButton1Click:Connect(onClick)
-
     return button
 end
 
--- Function to create toggle buttons
 local function createToggleButton(parent, positionY, settingName, buttonText, defaultState)
     local button = Instance.new("TextButton")
     button.Parent = parent
@@ -136,22 +120,17 @@ local function createToggleButton(parent, positionY, settingName, buttonText, de
     button.TextSize = 20
     button.Text = buttonText
     button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-
-    -- Add rounded corners
     local UICorner = Instance.new("UICorner")
     UICorner.Parent = button
-
     button.MouseButton1Click:Connect(function()
         getgenv()[settingName] = not getgenv()[settingName]
         button.Text = buttonText
         button.BackgroundColor3 = getgenv()[settingName] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
         saveSettings()
     end)
-
     return button
 end
 
--- Create toggle buttons and text boxes using loaded settings
 local startYPosition = 0.125
 local buttonIncrement = 0.135
 local nextYPosition = startYPosition
@@ -171,7 +150,6 @@ nextYPosition = nextYPosition + buttonIncrement
 local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "EggName (Normal AutoHatch)", "EggName", "NormalEggName")
 nextYPosition = nextYPosition + buttonIncrement
 
--- Make draggable
 local function makeDraggable(frame)
     local dragging, dragInput, dragStart, startPos
 
@@ -185,7 +163,6 @@ local function makeDraggable(frame)
             dragging = true
             dragStart = input.Position
             startPos = frame.Position
-
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
@@ -209,7 +186,7 @@ end
 
 makeDraggable(MainFrame)
 
-if isMobile then
+if UserInputService.TouchEnabled then
     local toggleButton = createToggleButton(ScreenGui, "Toggle GUI", function()
         MainFrame.Visible = not MainFrame.Visible
     end)
@@ -221,16 +198,10 @@ local function toggleGuiVisibility()
     MainFrame.Visible = not MainFrame.Visible
 end
 
--- Function to handle keybind
 local function handleKeybind(input)
     if input.UserInputType == Enum.UserInputType.Keyboard then
-        -- Check if any TextBox currently has focus
         local focusedTextBox = UserInputService:GetFocusedTextBox()
-        if focusedTextBox then
-            return -- Exit function if a TextBox has focus
-        end
-
-        if input.KeyCode == Enum.KeyCode[getgenv().Keybind] then
+        if not focusedTextBox and input.KeyCode == Enum.KeyCode[getgenv().Keybind] then
             toggleGuiVisibility()
         end
     end
@@ -238,31 +209,19 @@ end
 
 UserInputService.InputBegan:Connect(handleKeybind)
 
--- Your main script logic
+-- Main script logic
 getgenv().coinQueue = {}
-getgenv().CurrentValue = 0 
+getgenv().CurrentValue = 0
 
 local LocalPlayer = game.Players.LocalPlayer
 local HumanoidRootPart = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
-local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Network = ReplicatedStorage:WaitForChild("Network")
-local Workspace = cloneref(game:GetService("Workspace"))
+local Workspace = game:GetService("Workspace")
 local Things = Workspace["__THINGS"]
 local Breakables = Things:WaitForChild("Breakables")
 
 local doingQueue, farmBreakablesDebounce, hatchEggsDebounce, antiAFKDebounce = false, false, false, false
-
-if identifyexecutor() == "Solara" then
-    warn(" ")
-    warn("Solara doesn't support removing egg animation")
-    warn("AutoHatch still works")
-    warn("Egg is still hatching even if there is an egg in screen")
-    warn(" ")
-else
-    hookfunction(getsenv(LocalPlayer.PlayerScripts.Scripts.Game["Egg Opening Frontend"]).PlayEggAnimation, function()
-        return
-    end)
-end
 
 local function Fire(name, args)
     local networkEvent = Network:FindFirstChild(name)
@@ -274,8 +233,7 @@ local function Fire(name, args)
 end
 
 local function XZDist(obj1, obj2)
-    local pos1, pos2 = obj1.Position, obj2.Position
-    return (Vector2.new(pos1.X, pos1.Z) - Vector2.new(pos2.X, pos2.Z)).Magnitude
+    return (Vector2.new(obj1.Position.X, obj1.Position.Z) - Vector2.new(obj2.Position.X, obj2.Position.Z)).Magnitude
 end
 
 local function findNearestBreakable()
@@ -283,7 +241,7 @@ local function findNearestBreakable()
     for _, breakable in ipairs(Breakables:GetChildren()) do
         local meshPart = breakable:FindFirstChildWhichIsA("MeshPart")
         if meshPart then
-            local distance = (HumanoidRootPart.Position - meshPart.Position).magnitude
+            local distance = XZDist(HumanoidRootPart, meshPart)
             if distance < nearestDistance then
                 nearestBreakable, nearestDistance = breakable, distance
             end
@@ -342,17 +300,13 @@ local function hatchEgg()
     if getgenv().AutoHatchEvent and not hatchEggsDebounce then
         hatchEggsDebounce = true
         Network:WaitForChild("CustomEggs_Hatch"):InvokeServer(findNearestEgg(), getgenv().EggAmount)
-        task.wait()
         hatchEggsDebounce = false
     end
 end
 
 local function eggnameHatch()
-    while getgenv().AutoHatchNormal and not nameEggsDebounce do
-        nameEggsDebounce = true
+    if getgenv().AutoHatchNormal then
         Network.Eggs_RequestPurchase:InvokeServer(getgenv().NormalEggName, getgenv().EggAmount)
-        task.wait()
-        nameEggsDebounce = false
     end
 end
 
@@ -369,7 +323,6 @@ Things:FindFirstChild("Lootbags").ChildAdded:Connect(function(lootbag)
     task.wait()
     if lootbag then
         Network:WaitForChild("Lootbags_Claim"):FireServer({lootbag.Name})
-        task.wait()
         lootbag:Destroy()
     end
 end)
@@ -378,7 +331,6 @@ Things:FindFirstChild("Orbs").ChildAdded:Connect(function(orb)
     task.wait()
     if orb then
         Network:FindFirstChild("Orbs: Collect"):FireServer({tonumber(orb.Name)})
-        task.wait()
         orb:Destroy()
     end
 end)
@@ -404,6 +356,7 @@ print("AutoHatchNormal is for normal world or area eggs")
 print("AutoHatchNormal only works in world egg or the one thats always in area/worlds")
 print(" ")
 
+-- Main loop
 while task.wait() do
     task.spawn(farmBreakables)
     task.spawn(hatchEgg)
