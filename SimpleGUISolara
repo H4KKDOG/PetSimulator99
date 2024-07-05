@@ -380,6 +380,7 @@ end
 local function tapEgg()
     if not tapEggsDebounce then
         tapEggsDebounce = true
+        repeat task.wait() until Workspace.Camera:FindFirstChild("Eggs")
         repeat
             task.wait()
             clickPosition()
