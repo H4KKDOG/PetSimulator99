@@ -141,6 +141,11 @@ local function createToggleButton(parent, buttonText, onClick)
     button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     button.BorderSizePixel = 0
 
+    -- Add rounded corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8) -- Adjust the radius as needed
+    UICorner.Parent = button
+
     button.MouseButton1Click:Connect(onClick)
 
     return button
