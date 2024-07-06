@@ -279,15 +279,15 @@ local function antiAFK()
 end
 
 --// Ui
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-local Window = Rayfield:CreateWindow({
-   Name = "PS99 (SolaraVersion)",
-   LoadingTitle = "PS99 Solara",
+local ArrayField = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/ArrayField/main/Source.lua'))()
+local Window = ArrayField:CreateWindow({
+   Name = "PS99 (Solara Version)",
+   LoadingTitle = "Simple PS99 Script that made for Solara",
    LoadingSubtitle = "by @stupidzero.",
    ConfigurationSaving = {
       Enabled = false,
-      FolderName = nil,
-      FileName = "ps99settings"
+      FolderName = "H4KKDOG",
+      FileName = "PS99Config"
    },
    Discord = {
       Enabled = false,
@@ -298,19 +298,27 @@ local Window = Rayfield:CreateWindow({
    KeySettings = {
       Title = "Loader",
       Subtitle = "Key System",
-      Note = "github.com/H4KKDOG",
-      FileName = "ps99key",
+      Note = "https://github.com/H4KKDOG",
+      FileName = "PS99Key",
       SaveKey = true,
       GrabKeyFromSite = false,
+      Actions = {
+            [1] = {
+                Text = 'Copy Github Link',
+                OnPress = function()
+                    setclipboard("github.com/H4KKDOG")
+                end,
+                }
+            },
       Key = {"ps99"}
    }
 })
 
-local Tab = Window:CreateTab("Main      ", 0)
+local Tab = Window:CreateTab("Main")
 
-local Section = Tab:CreateSection("Farm")
+local Section = Tab:CreateSection("Farm", true)
 
-local Toggle1 = Tab:CreateToggle({
+local Toggle = Tab:CreateToggle({
    Name = "AutoTap Breakable",
    CurrentValue = config.farmSettings.breakObjects,
    Flag = "config.farmSettings.breakObjects", 
@@ -342,14 +350,16 @@ local Toggle = Tab:CreateToggle({
    end,
 })
 
-local Section = Tab:CreateSection("Egg")
+local Section = Tab:CreateSection("Egg", true)
 
 local Input = Tab:CreateInput({
    Name = "EggName to Hatch",
    PlaceholderText = config.eggSettings.EggName,
+   NumbersOnly = false,
+   CharacterLimit = false,
+   OnEnter = false,
    RemoveTextAfterFocusLost = false,
    Callback = function(eggPicked)
-        print(eggPicked)
         config.eggSettings.EggName = eggPicked
         updateConfig()
    end,
@@ -358,9 +368,11 @@ local Input = Tab:CreateInput({
 local Input = Tab:CreateInput({
    Name = "EggAmount to Hatch",
    PlaceholderText = config.eggSettings.openAmount,
+   NumbersOnly = true,
+   CharacterLimit = false,
+   OnEnter = false,
    RemoveTextAfterFocusLost = false,
    Callback = function(openamount)
-        print(tonumber(openamount))
         config.eggSettings.openAmount = tonumber(openamount)
         updateConfig()
    end,
@@ -376,7 +388,7 @@ local Toggle = Tab:CreateToggle({
    end,
 })
 
-local Section = Tab:CreateSection("Event")
+local Section = Tab:CreateSection("Event", true)
 
 local Toggle = Tab:CreateToggle({
    Name = "Nearest AutoHatch Event",
@@ -388,7 +400,7 @@ local Toggle = Tab:CreateToggle({
    end,
 })
 
-local Section = Tab:CreateSection("Misc")
+local Section = Tab:CreateSection("Misc", true)
 
 local Toggle = Tab:CreateToggle({
    Name = "AutoOpen GiftBag",
@@ -416,6 +428,7 @@ local Toggle = Tab:CreateToggle({
 
 local Button = Tab:CreateButton({
    Name = "Remove Water",
+   Interact = 'Click',
    Callback = function()
         for _, water in ipairs(Map:GetDescendants()) do
             if water:IsA("Folder") and water.Name == "Water Bounds" then
@@ -425,10 +438,11 @@ local Button = Tab:CreateButton({
    end,
 })
 
-local Section = Tab:CreateSection("Server")
+local Section = Tab:CreateSection("Server", true)
 
 local Button = Tab:CreateButton({
    Name = "Rejoin Server",
+   Interact = 'Click',
    Callback = function()
         game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
    end,
