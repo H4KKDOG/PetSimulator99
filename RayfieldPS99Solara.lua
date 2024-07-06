@@ -292,7 +292,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local Tab = Window:CreateTab("Main   ", 0)
+local Tab = Window:CreateTab("Main      ", 0)
 
 local Section = Tab:CreateSection("Farm")
 
