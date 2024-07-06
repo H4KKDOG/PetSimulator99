@@ -29,25 +29,46 @@ local Lootbags = Things.Lootbags
 local Orbs = Things.Orbs
 local Breakables = Things.Breakables
 
+local function getMap()
+    local rValue
+    for _,map in ipairs(Workspace:GetChildren()) do
+        if map.Name:find("Map") then
+            rValue = map
+            break
+        end
+    end
+    return rValue
+end
+
+local Map
+if getMap() then
+    Map = getMap()
+else
+    task.spawn(function()
+        repeat
+            task.wait()
+        until getMap()
+        Map = getMap()
+    end)
+end
+
 LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
 
 if getconnections then
     for _, v in pairs(getconnections(LocalPlayer.Idled)) do
         v:Disable()
     end
-else
-    LocalPlayer.Idled:Connect(function()
-        VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-        task.wait()
-        VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-    end)
+end
+
+for _, water in ipairs(Map:GetDescendants()) do
+    if water:IsA("Folder") and water.Name == "Water Bounds" then
+        water:Destroy()
+    end
 end
 
 getgenv().cooking = false
 getgenv().cooking = true
 
-getgenv().config = getgenv().config
-local isFirstTime = false
 local configTemplate = {
     farmSettings = {
         breakObjects = false,
@@ -68,31 +89,6 @@ local configTemplate = {
         antiAFK = false,
     }
 }
-
-if not isfolder("ps99 configs") then
-    isFirstTime = true
-    makefolder("ps99 configs")
-end
-if not isfile("ps99 configs/12345.config") then
-    isFirstTime = true
-    writefile("ps99 configs/12345.config", "")
-end
-
-if isFirstTime then
-    local encodedConfig = HttpService:JSONEncode(configTemplate)
-    writefile("ps99 configs/12345.config", encodedConfig)
-end
-
-local function loadConfig()
-    local decodedConfig = HttpService:JSONDecode(readfile("ps99 configs/12345.config"))
-    getgenv().config = decodedConfig
-end
-local function updateConfig()
-    local encodedConfig = HttpService:JSONEncode(getgenv().config)
-    writefile("ps99 configs/12345.config", encodedConfig)
-end
-
-loadConfig()
 
 getgenv().coinQueue = {}
 
@@ -285,7 +281,7 @@ local Window = Rayfield:CreateWindow({
    LoadingTitle = "PS99 Solara",
    LoadingSubtitle = "by @stupidzero.",
    ConfigurationSaving = {
-      Enabled = false,
+      Enabled = true,
       FolderName = nil,
       FileName = "ps99settings"
    },
@@ -411,17 +407,6 @@ local Toggle = Tab:CreateToggle({
    Callback = function(value)
         config.miscSettings.antiAFK = value
         updateConfig()
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "Remove Water",
-   Callback = function()
-        for _, water in ipairs(Map:GetDescendants()) do
-            if water:IsA("Folder") and water.Name == "Water Bounds" then
-                water:Destroy()
-            end
-        end
    end,
 })
 
