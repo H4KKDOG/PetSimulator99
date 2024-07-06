@@ -150,7 +150,7 @@ local function isBreakableInRadius(breakable)
 end
 
 function find_nearest_egg()
-    local nearest, nearest_distance = nil, 250
+    local nearest, nearest_distance = nil, 300
     if Things:FindFirstChild("CustomEggs") then
       for _,v in Things.CustomEggs:GetChildren() do
          if not v:IsA("Model") then continue end
