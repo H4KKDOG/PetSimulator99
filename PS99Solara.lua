@@ -220,7 +220,8 @@ end
 local function TfarmEggs()
     if openEggs and not farmEggsDebounce then
         farmEggsDebounce = true
-        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(EggName, openAmount)
+        local splitName = string.split(EggName, " | ")
+        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(splitName[2], openAmount)
         task.wait(0.25)
         farmEggsDebounce = false
     end
@@ -255,138 +256,136 @@ local function TantiAFK()
 end
 
 --// Ui
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-local Window = Rayfield:CreateWindow({
-   Name = "PS99 (SolaraVersion)",
-   LoadingTitle = "PS99 Solara",
-   LoadingSubtitle = "by @stupidzero.",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "ps99settings"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = false,
-   KeySettings = {
-      Title = "Loader",
-      Subtitle = "Key System",
-      Note = "github.com/H4KKDOG",
-      FileName = "ps99key",
-      SaveKey = true,
-      GrabKeyFromSite = false,
-      Key = {"ps99"}
-   }
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "PS99 (Solara Edition)", HidePremium = true, SaveConfig = true, ConfigFolder = "ps99config"})
+
+OrionLib:MakeNotification({
+	Name = "@stupidzero.",
+	Content = "PS99 Script for Solara",
+	Image = "rbxassetid://4483345998",
+	Time = 5
 })
 
-local Tab = Window:CreateTab("Main      ", 0)
+local Tab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
 
-local Section = Tab:CreateSection("Farm")
+local Section = Tab:AddSection({ Name = "Farm" })
 
-local Toggle1 = Tab:CreateToggle({
-   Name = "AutoTap Breakable",
-   CurrentValue = false,
-   Flag = "breakObjects", 
-   Callback = function(brek)
-        breakObjects = brek
+Tab:AddToggle({
+	Name = "Auto Tap Breakable",
+	Default = false,
+    Save = true,
+    Flag = "abreak",
+	Callback = function(Value)
+        breakObjects = Value
         if not breakObjects then
             table.clear(coinQueue)
         end
-   end,
+	end    
 })
 
-local Toggle = Tab:CreateToggle({
-   Name = "AutoCollect Orbs",
-   CurrentValue = false,
-   Flag = "collectOrbs", 
-   Callback = function(coi)
-        collectOrbs = coi
-        
-   end,
+Tab:AddToggle({
+	Name = "Auto Collect Orbs",
+	Default = false,
+    Save = true,
+    Flag = "ccoin",
+	Callback = function(Value)
+		collectOrbs = Value
+	end    
 })
 
-local Toggle = Tab:CreateToggle({
-   Name = "AutoCollet Lootbags",
-   CurrentValue = false,
-   Flag = "collectLootbags", 
-   Callback = function(bag)
-        collectLootbags = bag
-   end,
+Tab:AddToggle({
+	Name = "Auto Collect Lootbags",
+	Default = false,
+    Save = true,
+    Flag = "aloot",
+	Callback = function(Value)
+		collectLootbags = Value
+	end    
 })
 
-local Section = Tab:CreateSection("Egg")
+local Section = Tab:AddSection({ Name = "Egg" })
 
-local Input = Tab:CreateInput({
-   Name = "Egg Name to Hatch",
-   PlaceholderText = "World Egg Only",
-   RemoveTextAfterFocusLost = false,
-   Callback = function(eggPicked)
-        EggName = eggPicked
-   end,
+Tab:AddDropdown({
+	Name = "Select Egg",
+	Default = "None",
+    Save = true,
+    Flag = "eggsel",
+	Options = Eggs,
+	Callback = function(Value)
+		EggName = Value
+	end    
 })
 
-local Slider = Tab:CreateSlider({
-   Name = "Egg Amount",
-   Range = {0, 99},
-   Increment = 1,
-   Suffix = "Amount",
-   CurrentValue = 1,
-   Flag = "openAmount",
-   Callback = function(openamount)
-        openAmount = tonumber(openamount)
-   end,
+Tab:AddSlider({
+	Name = "Egg Amount",
+	Min = 1,
+	Max = 99,
+	Default = 1,
+    Save = true,
+    Flag = "eggamo",
+	Color = Color3.fromRGB(250,250,255),
+	Increment = 1,
+	ValueName = "Egg",
+	Callback = function(Value)
+		openAmount = Value
+	end    
 })
 
-local Toggle = Tab:CreateToggle({
-   Name = "Start Auto Hatch",
-   CurrentValue = false,
-   Flag = "openEggs", 
-   Callback = function(openegg)
-        openEggs = openegg
-   end,
+Tab:AddToggle({
+	Name = "Start Auto Hatch",
+	Default = false,
+    Save = true,
+    Flag = "ahatch",
+	Callback = function(Value)
+		openEggs = Value
+	end    
 })
 
-local Section = Tab:CreateSection("Event")
+local Section = Tab:AddSection({ Name = "Event" })
 
-local Toggle = Tab:CreateToggle({
-   Name = "Nearest Egg Auto Hatch (Event)",
-   CurrentValue = false,
-   Flag = "openeventEggs", 
-   Callback = function(nearegg)
-        openeventEggs = nearegg
-   end,
+Tab:AddToggle({
+	Name = "Nearest Egg Auto Hatch (Event)",
+	Default = false,
+    Save = true,
+    Flag = "eventnear",
+	Callback = function(Value)
+		openeventEggs = Value
+	end    
 })
 
-local Section = Tab:CreateSection("Misc")
+local Section = Tab:AddSection({ Name = "Misc" })
 
-local Toggle = Tab:CreateToggle({
-   Name = "Auto Claim Gift Bag",
-   CurrentValue = false,
-   Flag = "collectTimeRewards", 
-   Callback = function(gift)
-        collectTimeRewards = gift
-   end,
+Tab:AddToggle({
+	Name = "Auto Claim Gift Bag",
+	Default = false,
+    Save = true,
+    Flag = "reward",
+	Callback = function(Value)
+		collectTimeRewards = Value
+	end    
 })
 
-local Toggle = Tab:CreateToggle({
-   Name = "Anti AFK",
-   CurrentValue = false,
-   Flag = "antiAFK", 
-   Callback = function(anf)
-        antiAFK = anf
-   end,
+Tab:AddToggle({
+	Name = "Anti AFK",
+	Default = false,
+    Save = true,
+    Flag = "afk",
+	Callback = function(Value)
+		antiAFK = Value
+	end    
 })
 
-local Section = Tab:CreateSection("Server")
+local Section = Tab:AddSection({ Name = "Server" })
 
-local Button = Tab:CreateButton({
-   Name = "Rejoin Server",
-   Callback = function()
-        game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
-   end,
+Tab:AddButton({
+	Name = "Rejoin Game",
+	Callback = function()
+      	game:GetService("TeleportService"):Teleport(game.PlaceId, LocalPlayer)
+  	end    
 })
 
 while task.wait() and getgenv().cooking do
@@ -398,3 +397,5 @@ while task.wait() and getgenv().cooking do
     task.spawn(TantiAFK)
     task.spawn(TeventEggs)
 end
+
+OrionLib:Init()
