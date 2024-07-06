@@ -220,7 +220,8 @@ end
 local function TfarmEggs()
     if openEggs and not farmEggsDebounce then
         farmEggsDebounce = true
-        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(EggName, openAmount)
+        local splitName = string.split(selectedEgg, " | ")
+        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(splitName[2], openAmount)
         task.wait(0.25)
         farmEggsDebounce = false
     end
