@@ -320,14 +320,11 @@ local Toggle = Tab:CreateToggle({
 
 local Section = Tab:CreateSection("Egg")
 
-local Dropdown = Tab:CreateDropdown({
-   Name = "Select Egg",
-   Options = {Eggs},
-   CurrentOption = {"None"},
-   MultipleOptions = false,
-   Flag = "EggName",
+local Input = Tab:CreateInput({
+   Name = "Egg Name to Hatch",
+   PlaceholderText = "World Egg Only",
+   RemoveTextAfterFocusLost = false,
    Callback = function(eggPicked)
-        print(eggPicked)
         EggName = eggPicked
    end,
 })
