@@ -29,6 +29,20 @@ local Lootbags = Things.Lootbags
 local Orbs = Things.Orbs
 local Breakables = Things.Breakables
 
+LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
+
+if getconnections then
+    for _, v in pairs(getconnections(LocalPlayer.Idled)) do
+        v:Disable()
+    end
+else
+    LocalPlayer.Idled:Connect(function()
+        VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+        task.wait()
+        VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    end)
+end
+
 getgenv().cooking = false
 getgenv().cooking = true
 
@@ -397,20 +411,6 @@ local Toggle = Tab:CreateToggle({
    Callback = function(value)
         config.miscSettings.antiAFK = value
         updateConfig()
-
-        LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
-
-        if getconnections then
-            for _, v in pairs(getconnections(LocalPlayer.Idled)) do
-                v:Disable()
-            end
-        else
-            LocalPlayer.Idled:Connect(function()
-                VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-                task.wait()
-                VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            end)
-        end
    end,
 })
 
