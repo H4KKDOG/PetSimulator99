@@ -108,6 +108,7 @@ local configTemplate = {
         collectOrbsAndLootbags = false,
     },
     eggSettings = {
+        eventEggs = false,
         openEggs = false,
         selectedEgg = "",
         openAmount = 1
@@ -277,6 +278,20 @@ local function isBreakableInRadius(breakable)
     return false
 end
 
+function find_nearest_egg()
+    local nearest, nearest_distance = nil, 500
+    if Things:FindFirstChild("CustomEggs") then
+      for _,v in Things.CustomEggs:GetChildren() do
+         if not v:IsA("Model") then continue end
+         local dist = (LocalPlayer.Character.HumanoidRootPart.Position - v.PrimaryPart.Position).Magnitude
+         if dist > nearest_distance then continue end
+         nearest = v.Name
+         nearest_distance = dist
+      end
+   end
+   return nearest
+end
+
 local doingQueue = false
 local farmBreakablesDebounce = false
 local collectLootbagsDebounce = false
@@ -360,6 +375,20 @@ local function farmEggs()
         until not Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.openEggs
         task.wait(0.75)
         farmEggsDebounce = false
+    end
+end
+
+local function nearEggs()
+    if config.eggSettings.eventEggs and not nearEggsDebounce then
+        nearEggsDebounce = true
+        Network:WaitForChild("CustomEggs_Hatch"):InvokeServer(find_nearest_egg(), config.eggSettings.openAmount)
+        task.wait(0.4)
+        repeat
+            task.wait()
+            clickPosition(math.huge,math.huge)
+        until not Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.eventEggs
+        task.wait(0.75)
+        nearEggsDebounce = false
     end
 end
 
@@ -542,6 +571,16 @@ eggTab:Toggle({
     Default = config.eggSettings.openEggs,
     Callback = function(value)
         config.eggSettings.openEggs = value
+        updateConfig()
+    end
+})
+
+eggTab:Section("Event Egg")
+eggTab:Toggle({
+    Name = "Open Nearest Event Egg",
+    Default = config.eggSettings.eventEggs,
+    Callback = function(value)
+        config.eggSettings.eventEggs = value
         updateConfig()
     end
 })
