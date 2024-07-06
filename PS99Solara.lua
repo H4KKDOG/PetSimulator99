@@ -290,8 +290,8 @@ local Toggle1 = Tab:CreateToggle({
    Name = "AutoTap Breakable",
    CurrentValue = false,
    Flag = "breakObjects", 
-   Callback = function(value)
-        breakObjects = value
+   Callback = function(brek)
+        breakObjects = brek
         if not breakObjects then
             table.clear(coinQueue)
         end
@@ -302,8 +302,8 @@ local Toggle = Tab:CreateToggle({
    Name = "AutoCollect Orbs",
    CurrentValue = false,
    Flag = "collectOrbs", 
-   Callback = function(value)
-        collectOrbs = value
+   Callback = function(coi)
+        collectOrbs = coi
         
    end,
 })
@@ -312,8 +312,8 @@ local Toggle = Tab:CreateToggle({
    Name = "AutoCollet Lootbags",
    CurrentValue = false,
    Flag = "collectLootbags", 
-   Callback = function(value)
-        collectLootbags = value
+   Callback = function(bag)
+        collectLootbags = bag
    end,
 })
 
@@ -335,7 +335,7 @@ local Slider = Tab:CreateSlider({
    Suffix = "Amount",
    CurrentValue = 1,
    Flag = "openAmount",
-   Callback = function(openAmount)
+   Callback = function(openamount)
         openAmount = tonumber(openamount)
    end,
 })
