@@ -302,9 +302,6 @@ function AddInfos(Object:Frame,Settings,type)
 			FadeDescription(Settings,type)
 		end
 	end)
-	Object.MouseLeave:Connect(function()
-		FadeDescription(nil,nil,true)
-	end)
 end
 local function PackColor(Color)
 	return {R = Color.R * 255, G = Color.G * 255, B = Color.B * 255}
