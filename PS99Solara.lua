@@ -29,6 +29,8 @@ local Lootbags = Things.Lootbags
 local Orbs = Things.Orbs
 local Breakables = Things.Breakables
 
+LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
+
 local function getMap()
     local rValue
     for _,map in ipairs(Workspace:GetChildren()) do
@@ -52,8 +54,6 @@ else
     end)
 end
 
-LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
-
 if getconnections then
     for _, v in pairs(getconnections(LocalPlayer.Idled)) do
         v:Disable()
@@ -68,29 +68,9 @@ end
 
 getgenv().cooking = false
 getgenv().cooking = true
-
-local configTemplate = {
-    farmSettings = {
-        breakObjects = false,
-        buyZones = false,
-        collectOrbs = false,
-        collectLootbags = false,
-    },
-    eggSettings = {
-        openEggs = false,
-        openeventEggs = false,
-        EggName = "World/Area Egg Only",
-        openAmount = 1
-    },
-    rewardSettings = {
-        collectTimeRewards = false,
-    },
-    miscSettings = {
-        antiAFK = false,
-    }
-}
-
 getgenv().coinQueue = {}
+local PS99Info = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/lua/normal/games/PetSimulator99/table/"..Map.Name..".lua"))()
+local Eggs = PS99Info.Eggs
 
 local function getNames(tbl)
     local returnTable = {}
@@ -182,8 +162,8 @@ local collectTimeRewardsDebounce = false
 local collectStarterWheelTicketDebounce = false
 local antiAFKDebounce = false
 
-local function farmBreakables()
-    if config.farmSettings.breakObjects and not farmBreakablesDebounce then
+local function TfarmBreakables()
+    if breakObjects and not farmBreakablesDebounce then
         farmBreakablesDebounce = true
         local breakable = findNearestBreakable()
         if not table.find(coinQueue, breakable.Name) then
@@ -191,7 +171,7 @@ local function farmBreakables()
             task.spawn(function()
                 repeat
                     task.wait()
-                until not Breakables:FindFirstChild(breakable) or not isBreakableInRadius(breakable) or not config.farmSettings.breakObjects
+                until not Breakables:FindFirstChild(breakable) or not isBreakableInRadius(breakable) or not breakObjects
                 table.remove(coinQueue, table.find(coinQueue, breakable))
             end)
         end
@@ -209,12 +189,12 @@ local function farmBreakables()
     farmBreakablesDebounce = false
 end
 
-local function collectLootbags()
-    if config.farmSettings.collectLootbags and not collectLootbagsDebounce then
+local function TcollectLootbags()
+    if collectLootbags and not collectLootbagsDebounce then
         collectLootbagsDebounce = true
         local lootbags = {}
         for _, lootbag in ipairs(Lootbags:GetChildren()) do
-            if not config.farmSettings.collectLootbags then break end
+            if not collectLootbags then break end
             lootbags[lootbag.Name] = lootbag.Name
             lootbag:Destroy()
         end
@@ -223,12 +203,12 @@ local function collectLootbags()
     end
 end
 
-local function collectOrbs()
-    if config.farmSettings.collectOrbs and not collectOrbsDebounce then
+local function TcollectOrbs()
+    if collectOrbs and not collectOrbsDebounce then
         collectOrbsDebounce = true
         local orbs = {}
         for _, orb in ipairs(Orbs:GetChildren()) do
-            if not config.farmSettings.collectOrbs then break end
+            if not collectOrbs then break end
             table.insert(orbs, tonumber(orb.Name))
             orb:Destroy()
         end
@@ -237,26 +217,26 @@ local function collectOrbs()
     end
 end
 
-local function farmEggs()
-    if config.eggSettings.openEggs and not farmEggsDebounce then
+local function TfarmEggs()
+    if openEggs and not farmEggsDebounce then
         farmEggsDebounce = true
-        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(config.eggSettings.EggName, config.eggSettings.openAmount)
+        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(EggName, openAmount)
         task.wait(0.25)
         farmEggsDebounce = false
     end
 end
 
-local function eventEggs()
-    if config.eggSettings.openeventEggs and not nearEggsDebounce then
+local function TeventEggs()
+    if openeventEggs and not nearEggsDebounce then
         nearEggsDebounce = true
-        Network:WaitForChild("CustomEggs_Hatch"):InvokeServer(find_nearest_egg(), config.eggSettings.openAmount)
+        Network:WaitForChild("CustomEggs_Hatch"):InvokeServer(find_nearest_egg(), openAmount)
         task.wait(0.25)
         nearEggsDebounce = false
     end
 end
 
-local function collectTimeRewards()
-    if config.rewardSettings.collectTimeRewards and not collectTimeRewardsDebounce then
+local function TcollectTimeRewards()
+    if collectTimeRewards and not collectTimeRewardsDebounce then
         collectTimeRewardsDebounce = true
         for i=1,12 do
             Invoke("Redeem Free Gift", {i})
@@ -265,8 +245,8 @@ local function collectTimeRewards()
     end
 end
 
-local function antiAFK()
-    if config.miscSettings.antiAFK and not antiAFKDebounce then
+local function TantiAFK()
+    if antiAFK and not antiAFKDebounce then
         antiAFKDebounce = true
         LocalPlayer.Character.Humanoid:ChangeState(3)
         task.wait(math.random(180,360))
@@ -308,11 +288,11 @@ local Section = Tab:CreateSection("Farm")
 
 local Toggle1 = Tab:CreateToggle({
    Name = "AutoTap Breakable",
-   CurrentValue = config.farmSettings.breakObjects,
-   Flag = "config.farmSettings.breakObjects", 
+   CurrentValue = false,
+   Flag = "breakObjects", 
    Callback = function(value)
-        config.farmSettings.breakObjects = value
-        if not config.farmSettings.breakObjects then
+        breakObjects = value
+        if not breakObjects then
             table.clear(coinQueue)
         end
    end,
@@ -320,93 +300,85 @@ local Toggle1 = Tab:CreateToggle({
 
 local Toggle = Tab:CreateToggle({
    Name = "AutoCollect Orbs",
-   CurrentValue = config.farmSettings.collectOrbs,
-   Flag = "config.farmSettings.collectOrbs", 
+   CurrentValue = false,
+   Flag = "collectOrbs", 
    Callback = function(value)
-        config.farmSettings.collectOrbs = value
-        updateConfig()
+        collectOrbs = value
+        
    end,
 })
 
 local Toggle = Tab:CreateToggle({
    Name = "AutoCollet Lootbags",
-   CurrentValue = config.farmSettings.collectLootbags,
-   Flag = "config.farmSettings.collectLootbags", 
+   CurrentValue = false,
+   Flag = "collectLootbags", 
    Callback = function(value)
-        config.farmSettings.collectLootbags = value
-        updateConfig()
+        collectLootbags = value
    end,
 })
 
 local Section = Tab:CreateSection("Egg")
 
-local Input = Tab:CreateInput({
-   Name = "EggName to Hatch",
-   PlaceholderText = config.eggSettings.EggName,
-   RemoveTextAfterFocusLost = false,
+local Dropdown = Tab:CreateDropdown({
+   Name = "Select Egg",
+   Options = Eggs,
+   CurrentOption = {"None"},
+   MultipleOptions = false,
+   Flag = "EggName",
    Callback = function(eggPicked)
-        print(eggPicked)
-        config.eggSettings.EggName = eggPicked
-        updateConfig()
+        EggName = eggPicked
    end,
 })
 
-local Input = Tab:CreateInput({
-   Name = "EggAmount to Hatch",
-   PlaceholderText = config.eggSettings.openAmount,
-   RemoveTextAfterFocusLost = false,
-   Callback = function(openamount)
-        print(tonumber(openamount))
-        config.eggSettings.openAmount = tonumber(openamount)
-        updateConfig()
+local Slider = Tab:CreateSlider({
+   Name = "Egg Amount",
+   Range = {0, 99},
+   Increment = 1,
+   Suffix = "Amount",
+   CurrentValue = 1,
+   Flag = "openAmount",
+   Callback = function(Value)
+        openAmount = tonumber(openamount)
    end,
 })
 
 local Toggle = Tab:CreateToggle({
-   Name = "Start AutoHatch",
-   CurrentValue = config.eggSettings.openEggs,
-   Flag = config.eggSettings.openEggs, 
+   Name = "Start Auto Hatch",
+   CurrentValue = false,
+   Flag = "openEggs", 
    Callback = function(openegg)
-        config.eggSettings.openEggs = openegg
-        updateConfig()
+        openEggs = openegg
    end,
 })
 
 local Section = Tab:CreateSection("Event")
 
 local Toggle = Tab:CreateToggle({
-   Name = "Nearest AutoHatch Event",
-   CurrentValue = config.eggSettings.openeventEggs,
-   Flag = config.eggSettings.openeventEggs, 
+   Name = "Nearest Egg Auto Hatch (Event)",
+   CurrentValue = false,
+   Flag = "openeventEggs", 
    Callback = function(nearegg)
-        config.eggSettings.openeventEggs = nearegg
-        updateConfig()
+        openeventEggs = nearegg
    end,
 })
 
 local Section = Tab:CreateSection("Misc")
 
 local Toggle = Tab:CreateToggle({
-   Name = "AutoOpen GiftBag",
-   CurrentValue = config.rewardSettings.collectTimeRewards,
-   Flag = "config.rewardSettings.collectTimeRewards", 
-   Callback = function(value)
-        config.rewardSettings.collectTimeRewards = value
-        updateConfig()
-        if not config.farmSettings.collectOrbs and not config.farmSettings.Lootbags then
-            collectOrbs:SetValue(config.rewardSettings.collectTimeRewards)
-            Lootbags:SetValue(config.rewardSettings.collectTimeRewards)
-        end
+   Name = "Auto Claim Gift Bag",
+   CurrentValue = false,
+   Flag = "collectTimeRewards", 
+   Callback = function(gift)
+        collectTimeRewards = gift
    end,
 })
 
 local Toggle = Tab:CreateToggle({
-   Name = "AntiAFK",
-   CurrentValue = config.miscSettings.antiAFK,
-   Flag = "config.miscSettings.antiAFK", 
-   Callback = function(value)
-        config.miscSettings.antiAFK = value
-        updateConfig()
+   Name = "Anti AFK",
+   CurrentValue = false,
+   Flag = "antiAFK", 
+   Callback = function(anf)
+        antiAFK = anf
    end,
 })
 
@@ -420,11 +392,11 @@ local Button = Tab:CreateButton({
 })
 
 while task.wait() and getgenv().cooking do
-    task.spawn(farmBreakables)
-    task.spawn(collectLootbags)
-    task.spawn(collectOrbs)
-    task.spawn(farmEggs)
-    task.spawn(collectTimeRewards)
-    task.spawn(antiAFK)
-    task.spawn(eventEggs)
+    task.spawn(TfarmBreakables)
+    task.spawn(TcollectLootbags)
+    task.spawn(TcollectOrbs)
+    task.spawn(TfarmEggs)
+    task.spawn(TcollectTimeRewards)
+    task.spawn(TantiAFK)
+    task.spawn(TeventEggs)
 end
