@@ -322,11 +322,12 @@ local Section = Tab:CreateSection("Egg")
 
 local Dropdown = Tab:CreateDropdown({
    Name = "Select Egg",
-   Options = Eggs,
+   Options = {Eggs},
    CurrentOption = {"None"},
    MultipleOptions = false,
    Flag = "EggName",
    Callback = function(eggPicked)
+        print(eggPicked)
         EggName = eggPicked
    end,
 })
