@@ -230,7 +230,7 @@ end
 local function farmEggs()
     if config.eggSettings.openEggs and not farmEggsDebounce then
         farmEggsDebounce = true
-        Network.WaitForChild("Eggs_RequestPurchase"):InvokeServer(config.eggSettings.EggName, config.eggSettings.openAmount)
+        Network:WaitForChild("Eggs_RequestPurchase"):InvokeServer(config.eggSettings.EggName, config.eggSettings.openAmount)
         task.wait(0.25)
         farmEggsDebounce = false
     end
