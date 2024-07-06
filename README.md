@@ -9,6 +9,3 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/H4KKDOG/PetSimulator9
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/H4KKDOG/PetSimulator99/main/SimpleGUISolara.lua"))()
 ```
-
-###
-Credits to All of Owners of some code that i use in my script.
