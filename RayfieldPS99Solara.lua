@@ -44,7 +44,7 @@ local configTemplate = {
     eggSettings = {
         openEggs = false,
         openeventEggs = false,
-        EggName = "Hello",
+        EggName = "World/Area Egg Only",
         openAmount = 1
     },
     rewardSettings = {
