@@ -336,7 +336,7 @@ local Slider = Tab:CreateSlider({
    Suffix = "Amount",
    CurrentValue = 1,
    Flag = "openAmount",
-   Callback = function(Value)
+   Callback = function(openAmount)
         openAmount = tonumber(openamount)
    end,
 })
