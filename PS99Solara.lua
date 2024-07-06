@@ -69,7 +69,7 @@ end
 getgenv().cooking = false
 getgenv().cooking = true
 getgenv().coinQueue = {}
-local PS99Info = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/lua/normal/games/PetSimulator99/table/"..Map.Name..".lua"))()
+local PS99Info = loadstring(game:HttpGet("https://raw.githubusercontent.com/H4KKDOG/PetSimulator99/main/World/"..Map.Name..".lua"))()
 local Eggs = PS99Info.Eggs
 
 local function getNames(tbl)
