@@ -279,7 +279,7 @@ local function antiAFK()
 end
 
 --// Ui
-local ArrayField = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/ArrayField/main/Source.lua'))()
+local ArrayField = loadstring(game:HttpGet('https://raw.githubusercontent.com/H4KKDOG/PetSimulator99/main/UiLib/ArrayField'))()
 local Window = ArrayField:CreateWindow({
    Name = "PS99 (Solara Version)",
    LoadingTitle = "Simple PS99 Script that made for Solara",
