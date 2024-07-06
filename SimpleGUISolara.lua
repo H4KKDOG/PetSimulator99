@@ -1,4 +1,3 @@
--- Settings handling
 if getgenv().Running then
     return
 end
@@ -23,6 +22,7 @@ local function saveSettings()
         AutoHatchEvent = getgenv().AutoHatchEvent,
         AutoHatchNormal = getgenv().AutoHatchNormal,
         NormalEggName = getgenv().NormalEggName,
+		EggAmount = getgenv().EggAmount,
     }
     writefile("ps99settings.json", HttpService:JSONEncode(settings))
 end
@@ -55,7 +55,6 @@ Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 24
 
 local function createTextBox(parent, positionY, labelText, defaultValue, settingName)
-    -- Function to create text boxes
     local label = Instance.new("TextLabel")
     label.Parent = parent
     label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -81,13 +80,21 @@ local function createTextBox(parent, positionY, labelText, defaultValue, setting
     textBox.TextSize = 18
     local UICorner = Instance.new("UICorner")
     UICorner.Parent = textBox
+
     textBox.FocusLost:Connect(function(enterPressed)
         if enterPressed then
             local newText = textBox.Text
-            getgenv()[settingName] = newText
-            saveSettings() 
+            local numberValue = tonumber(newText)
+            if numberValue then
+                getgenv()[settingName] = numberValue
+                saveSettings()
+            else
+                textBox.Text = tostring(getgenv()[settingName] or defaultValue)
+				saveSettings() 
+            end
         end
-    end)
+    })
+
     return textBox
 end
 
@@ -148,6 +155,9 @@ local AutoHatchNormalButton = createToggleButton(MainFrame, nextYPosition, "Auto
 nextYPosition = nextYPosition + buttonIncrement
 
 local NormalEggNameLabel = createTextBox(MainFrame, nextYPosition, "EggName (Normal AutoHatch)", "EggName", "NormalEggName")
+nextYPosition = nextYPosition + buttonIncrement
+
+local EggAmountLabel = createTextBox(MainFrame, nextYPosition, "EggAmount to Hatch", "Amount", "EggAmount")
 nextYPosition = nextYPosition + buttonIncrement
 
 local function makeDraggable(frame)
