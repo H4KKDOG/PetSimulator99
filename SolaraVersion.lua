@@ -401,9 +401,9 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "circle" }),
-	Egg = Window:AddTab({ Title = "Egg", Icon = "circle" }),
-	Misc = Window:AddTab({ Title = "Misc", Icon = "circle" })
+    Main = Window:AddTab({ Title = "Main", Icon = "tractor" }),
+	Egg = Window:AddTab({ Title = "Egg", Icon = "egg" }),
+	Misc = Window:AddTab({ Title = "Misc", Icon = "align-justify" })
 }
 
 local Options = Fluent.Options
