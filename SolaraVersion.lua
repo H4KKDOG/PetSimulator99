@@ -409,9 +409,11 @@ local Tabs = {
 local Options = Fluent.Options
 
 do
-    Tabs.Main:AddParagraph({
-        Title = "Why Less Function?",
-        Content = "to be able to use in Solara"
+    Fluent:Notify({
+        Title = "@stupidzero.",
+        Content = "Solara Version",
+        SubContent = "Less Features",
+        Duration = 5
     })
 	
 	Tabs.Main:AddButton({
@@ -546,13 +548,13 @@ do
         Content = "Claim Gift/Time Reward"
     })
 
-    local Toggle7 = Tabs.Egg:AddToggle("Gift", {Title = "Auto Claim Gift/Reward", Default = config.rewardSettings.collectTimeRewards })
+    local Toggle7 = Tabs.Misc:AddToggle("Gift", {Title = "Auto Claim Gift/Reward", Default = config.rewardSettings.collectTimeRewards })
     Toggle7:OnChanged(function(Gift)
         config.rewardSettings.collectTimeRewards = Gift
 		updateConfig()
     end)
 
-    local Toggle8 = Tabs.Egg:AddToggle("AFK", {Title = "Anti AFK", Default = config.miscSettings.antiAFK })
+    local Toggle8 = Tabs.Misc:AddToggle("AFK", {Title = "Anti AFK", Default = config.miscSettings.antiAFK })
     Toggle8:OnChanged(function(AFK)
         config.miscSettings.antiAFK = AFK
 		updateConfig()
@@ -568,3 +570,10 @@ while task.wait() and getgenv().start do
     task.spawn(oeventEggs)
     task.spawn(antiAFK)
 end
+
+Window:SelectTab(1)
+Fluent:Notify({
+    Title = "@stupidzero.",
+    Content = "The Script has been loaded.",
+    Duration = 5
+})
