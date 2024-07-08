@@ -503,7 +503,7 @@ do
 	
 	Tabs.Egg:AddParagraph({
         Title = "Egg",
-        Content = "AutoHatch will work after you Open Egg n/ You need to be near to egg to hatch"
+        Content = "AutoHatch will work after you Open Egg /n You need to be near to egg to hatch"
     })
 	
 	local Dropdown1 = Tabs.Egg:AddDropdown("Select", {
