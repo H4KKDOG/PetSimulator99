@@ -217,14 +217,14 @@ local function XZDist(obj1, obj2)
     return math.sqrt(math.pow(PosX1 - PosX2, 2) + math.pow(PosZ1 - PosZ2, 2))
 end
 
-local function clickPosition(x,y)
-    VirtualUser:Button1Down(Vector2.new(x,y))
-    VirtualUser:Button1Up(Vector2.new(x,y))
+local function clickPosition()
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, 1)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, 1)
 end
 
 local function findNearestBreakable()
     local nearestBreakable
-    local nearestDistance = 9e9
+    local nearestDistance = math.huge
     for _, breakable in ipairs(Breakables:GetChildren()) do
         if breakable:FindFirstChildWhichIsA("MeshPart") then
             local meshPart = breakable:FindFirstChildWhichIsA("MeshPart")
@@ -337,10 +337,10 @@ local function farmEggs()
         farmEggsDebounce = true
         local splitName = string.split(config.eggSettings.selectedEgg, " | ")
         Invoke("Eggs_RequestPurchase",{splitName[2], config.eggSettings.openAmount})
-        task.wait(0.4)
+        task.wait(0.25)
         repeat
             task.wait()
-            clickPosition(math.huge,math.huge)
+            clickPosition()
         until not Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.openEggs
         task.wait(0.75)
         farmEggsDebounce = false
@@ -369,10 +369,10 @@ local function oeventEggs()
     if config.eggSettings.eventEggs and not nearEggDebounce then
         nearEggDebounce = true
         Invoke("CustomEggs_Hatch",{find_nearest_egg(), config.eggSettings.openAmount})
-        task.wait(0.4)
+        task.wait(0.25)
         repeat
             task.wait()
-            clickPosition(math.huge,math.huge)
+            clickPosition()
         until not Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.eventEggs
         task.wait(0.75)
         nearEggDebounce = false
