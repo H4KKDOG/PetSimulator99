@@ -64,6 +64,7 @@ local HumanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart"
 local VirtualUser = cloneref(game:GetService("VirtualUser"))
 local HttpService = cloneref(game:GetService("HttpService"))
 local UserInputService = cloneref(game:GetService("UserInputService"))
+local VirtualInputManager = cloneref(game:GetService("VirtualInputManager"))
 
 local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
 local Network = ReplicatedStorage.Network
@@ -218,8 +219,8 @@ local function XZDist(obj1, obj2)
 end
 
 local function clickPosition()
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, 1)
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, 1)
+    VirtualInputManager:SendMouseButtonEvent(1, 1, 0, true, game, 1)
+    VirtualInputManager:SendMouseButtonEvent(1, 1, 0, false, game, 1)
 end
 
 local function findNearestBreakable()
@@ -337,12 +338,14 @@ local function farmEggs()
         farmEggsDebounce = true
         local splitName = string.split(config.eggSettings.selectedEgg, " | ")
         Invoke("Eggs_RequestPurchase",{splitName[2], config.eggSettings.openAmount})
-        task.wait(0.25)
+        repeat task.wait() until Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.openEggs
         repeat
             task.wait()
+	    until Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.openEggs
+        repeat
+            wait()
             clickPosition()
         until not Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.openEggs
-        task.wait(0.75)
         farmEggsDebounce = false
     end
 end
@@ -369,12 +372,11 @@ local function oeventEggs()
     if config.eggSettings.eventEggs and not nearEggDebounce then
         nearEggDebounce = true
         Invoke("CustomEggs_Hatch",{find_nearest_egg(), config.eggSettings.openAmount})
-        task.wait(0.25)
+        repeat task.wait() until Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.eventEggs
         repeat
             task.wait()
             clickPosition()
         until not Workspace.Camera:FindFirstChild("Eggs") or not config.eggSettings.eventEggs
-        task.wait(0.75)
         nearEggDebounce = false
     end
 end
@@ -393,10 +395,10 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 local Window = Fluent:CreateWindow({
     Title = "Pet Simulator 99 (Solara)",
     SubTitle = "by @stupidzero.",
-    TabWidth = 150,
+    TabWidth = 125,
     Size = UDim2.fromOffset(550, 450),
     Acrylic = false,
-    Theme = "Dark",
+    Theme = "Darker",
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
@@ -501,7 +503,7 @@ do
 	
 	Tabs.Egg:AddParagraph({
         Title = "Egg",
-        Content = "You must be near eggs to Hatch"
+        Content = "AutoHatch will work after you Open Egg n/ You need to be near to egg to hatch"
     })
 	
 	local Dropdown1 = Tabs.Egg:AddDropdown("Select", {
@@ -571,7 +573,7 @@ while task.wait() and getgenv().start do
     task.spawn(antiAFK)
 end
 
-Window:SelectTab(1)
+Window:SelectTab(Main)
 Fluent:Notify({
     Title = "@stupidzero.",
     Content = "The Script has been loaded.",
